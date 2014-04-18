@@ -156,11 +156,17 @@ Grid.prototype.move = function (direction) {
   var cell, tile;
 
   var vector     = this.getVector(direction);
-  var traversals = this.buildTraversals(vector);
+  // var traversals = this.buildTraversals(vector);
 
   // Traverse the grid in the right direction and move tiles
-  traversals.x.forEach(function (x) {
-    traversals.y.forEach(function (y) {
+  var x_start = vector.x === 1 ? 3 : 0;
+  var y_start = vector.y === 1 ? 3 : 0;
+  var x_step = vector.x === 1 ? -1 : 1;
+  var y_step = vector.y === 1 ? -1 : 1;
+  
+  for (var x = x_start; x >= 0 && x < 4; x += x_step) {
+    for (var y = y_start; y >= 0 && y < 4; y += y_step) {
+
       cell = { x: x, y: y };
       tile = self.cellContent(cell);
 
@@ -183,8 +189,8 @@ Grid.prototype.move = function (direction) {
           self.moveTile(tile, positions.farthest);
         }
       }
-    });
-  });
+    }
+  }
 };
 
 // Get the vector representing the chosen direction
@@ -200,21 +206,21 @@ Grid.prototype.getVector = function (direction) {
   return map[direction];
 };
 
-// Build a list of positions to traverse in the right order
-Grid.prototype.buildTraversals = function (vector) {
-  var traversals = { x: [], y: [] };
+// // Build a list of positions to traverse in the right order
+// Grid.prototype.buildTraversals = function (vector) {
+//   var traversals = { x: [], y: [] };
 
-  for (var pos = 0; pos < this.size; pos++) {
-    traversals.x.push(pos);
-    traversals.y.push(pos);
-  }
+//   for (var pos = 0; pos < this.size; pos++) {
+//     traversals.x.push(pos);
+//     traversals.y.push(pos);
+//   }
 
-  // Always traverse from the farthest cell in the chosen direction
-  if (vector.x === 1) traversals.x = traversals.x.reverse();
-  if (vector.y === 1) traversals.y = traversals.y.reverse();
+//   // Always traverse from the farthest cell in the chosen direction
+//   if (vector.x === 1) traversals.x = traversals.x.reverse();
+//   if (vector.y === 1) traversals.y = traversals.y.reverse();
 
-  return traversals;
-};
+//   return traversals;
+// };
 
 Grid.prototype.findFarthestPosition = function (cell, vector) {
   var previous;
