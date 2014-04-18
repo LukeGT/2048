@@ -3,6 +3,38 @@ function Grid(size, previousState) {
   this.cells = previousState ? this.fromState(previousState) : this.empty();
 }
 
+Grid.prototype.clone = function () {
+  var to_return = new Grid(this.size);
+  for (var x = 0; x < this.size; ++x) {
+    for (var y = 0; y < this.size; ++y) {
+      var cell = this.cells[x][y];
+      if (cell != null) {
+        to_return.cells[x][y] = new Tile({x:x, y:y}, cell.value);
+      }
+    }
+  }
+  return to_return;
+};
+
+Grid.prototype.equals = function (other) {
+  for (var x = 0; x < this.size; ++x) {
+    for (var y = 0; y < this.size; ++y) {
+      var mine = this.cells[x][y]
+      var theirs = other.cells[x][y]
+      if (mine != null && theirs != null) {
+        if (mine.value !== theirs.value) {
+          return false;
+        }
+      } else {
+        if (mine !== theirs) {
+          return false;
+        }
+      }
+    }
+  }
+  return true;
+};
+
 // Build a grid of the specified size
 Grid.prototype.empty = function () {
   var cells = [];
@@ -119,6 +151,7 @@ Grid.prototype.serialize = function () {
 // Move tiles on the grid in the specified direction
 Grid.prototype.move = function (direction) {
   // 0: up, 1: right, 2: down, 3: left
+  var self = this;
 
   var cell, tile;
 
@@ -129,25 +162,25 @@ Grid.prototype.move = function (direction) {
   traversals.x.forEach(function (x) {
     traversals.y.forEach(function (y) {
       cell = { x: x, y: y };
-      tile = this.cellContent(cell);
+      tile = self.cellContent(cell);
 
       if (tile) {
-        var positions = this.findFarthestPosition(cell, vector);
-        var next      = this.cellContent(positions.next);
+        var positions = self.findFarthestPosition(cell, vector);
+        var next      = self.cellContent(positions.next);
 
         // Only one merger per row traversal?
         if (next && next.value === tile.value && !next.mergedFrom) {
           var merged = new Tile(positions.next, tile.value * 2);
           merged.mergedFrom = [tile, next];
 
-          this.insertTile(merged);
-          this.removeTile(tile);
+          self.insertTile(merged);
+          self.removeTile(tile);
 
           // Converge the two tiles' positions
           tile.updatePosition(positions.next);
 
         } else {
-          this.moveTile(tile, positions.farthest);
+          self.moveTile(tile, positions.farthest);
         }
       }
     });
