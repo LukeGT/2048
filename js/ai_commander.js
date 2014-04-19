@@ -47,7 +47,7 @@ AICommander.prototype.think = function () {
     return;
   }
 
-  var best = this.findBest(grid, 20000, 1);
+  var best = this.findBest(grid, 100000, 1);
   console.log(best);
 
   if (best.move === -1) {
