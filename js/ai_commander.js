@@ -2,13 +2,13 @@ function AICommander() {
   var self = this;
 
   this.events = {};
-  this.think_rate = 100;
+  this.delay = 50;
 
   this.storage_manager = new LocalStorageManager()
 
-  setInterval(function() {
+  setTimeout(function() {
     self.think();
-  }, this.think_rate);
+  }, this.delay);
 
   setTimeout(function() {
     self.emit("keepPlaying");
@@ -55,6 +55,11 @@ AICommander.prototype.think = function () {
   } else {
     this.emit("move", best.move);
   }
+
+  var self = this;
+  setTimeout(function() {
+    self.think();
+  }, self.delay);
 
 };
 
