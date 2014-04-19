@@ -132,25 +132,18 @@ AICommander.prototype.findBest = function (grid, depth) {
 
 AICommander.prototype.scoreGrid = function (grid) {
 
-  var x = 0;
-  var y = 0;
-  var direction = 1;
-  var sum = 0;
-  var grand_total = 0;
+  var score = 0;
 
-  for (; y < 4; ++y) {
-    for (; x >= 0 && x < 4; x += direction) {
+  for (var y = 0; y < 4; ++y) {
+    for (var x = 0; x < 4; ++x) {
       var cell = grid.cells[x][y];
       if (cell != null) {
-        sum += cell.value;
+        score -= Math.pow(2, cell.value);
       }
-      grand_total += sum;
     }
-    direction *= -1;
-    x += direction;
   }
 
-  return grand_total;
+  return score;
 };
 
 AICommander.prototype.restart = function (event) {
