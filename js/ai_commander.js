@@ -47,7 +47,7 @@ AICommander.prototype.think = function () {
     return;
   }
 
-  var best = this.findBest(grid, 4);
+  var best = this.findBest(grid, 40000, 1);
   console.log(best);
 
   if (best.move === -1) {
@@ -63,13 +63,13 @@ AICommander.prototype.think = function () {
 
 };
 
-AICommander.prototype.findBest = function (grid, depth) {
+AICommander.prototype.findBest = function (grid, quota, depth) {
 
   var self = this;
 
-  if (depth <= 0) {
+  if (quota <= 1) {
     return {
-      score: this.scoreGrid(grid),
+      score: this.scoreGrid(grid) - depth * 2.2 * 8,
     };
   }
 
@@ -90,35 +90,26 @@ AICommander.prototype.findBest = function (grid, depth) {
       var weight = 0;
       var score = 0;
 
+      var empty = 0;
       for (var y = 0; y < 4; ++y) {
-
-        var empty = true;
         for (var x = 0; x < 4; ++x) {
-          if (clone.cells[x][y] != null) {
-            empty = false;
+          if (clone.cells[x][y] == null) {
+            empty++;
           }
         }
+      }
 
-        if (empty) {
+      var new_quota = quota / (4 * empty);
 
-          two.x = 0;
-          two.y = y;
-          clone.insertTile(two);
-          score += 4 * self.findBest(clone, depth - 1).score;
-          clone.removeTile(two);
-          weight += 4;
-
-        } else {
-
-          for (var x = 0; x < 4; ++x) {
-            if (clone.cells[x][y] == null) {
-              two.x = x;
-              two.y = y;
-              clone.insertTile(two);
-              score += self.findBest(clone, depth - 1).score;
-              weight += 1;
-              clone.removeTile(two);
-            }
+      for (var y = 0; y < 4; ++y) {
+        for (var x = 0; x < 4; ++x) {
+          if (clone.cells[x][y] == null) {
+            two.x = x;
+            two.y = y;
+            clone.insertTile(two);
+            score += self.findBest(clone, new_quota, depth + 1).score;
+            weight += 1;
+            clone.removeTile(two);
           }
         }
       }
