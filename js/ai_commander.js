@@ -96,6 +96,12 @@ AICommander.prototype.findBest = function (grid, quota, depth) {
     }
   }
 
+  if (move_count <= 0) {
+    return {
+      score: 0
+    };
+  }
+
   for (var move = 0; move < 4; ++move) {
 
     if (moves[move] != null) {
