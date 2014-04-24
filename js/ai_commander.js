@@ -80,7 +80,7 @@ AICommander.prototype.findBest = function (grid, quota, depth) {
 
   var tile = new Tile({x:0, y:0}, 0);
 
-  var moves = []
+  var moves = [null, null, null, null];
   var move_count = 0;
 
   for (var move = 0; move < 4; ++move) {
@@ -91,8 +91,6 @@ AICommander.prototype.findBest = function (grid, quota, depth) {
     if (!clone.equals(grid)) {
       moves[move] = clone
       ++move_count;
-    } else {
-      moves[move] = null
     }
   }
 
@@ -131,19 +129,19 @@ AICommander.prototype.findBest = function (grid, quota, depth) {
             tile.value = 2;
 
             moved_grid.insertTile(tile);
+
             score += self.findBest(moved_grid, new_quota, depth + 1).score;
             weight += 1;
-            moved_grid.removeTile(tile);
 
             if (empty <= 2) {
 
               tile.value = 4;
 
-              moved_grid.insertTile(tile);
               score += 1/9 * self.findBest(moved_grid, new_quota, depth + 1).score;
               weight += 1/9;
-              moved_grid.removeTile(tile);
             }
+
+            moved_grid.removeTile(tile);
           }
         }
       }
